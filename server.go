@@ -81,6 +81,7 @@ func (server *Server) handler(conn net.Conn) {
 			// 剔除\n
 			msg := string(buf[:n-1])
 
+			// 将得到的消息进行广播
 			server.Broadcast(user, msg)
 		}
 	}()
