@@ -55,22 +55,16 @@ func (server *Server) handler(conn net.Conn) {
 	// 当前链接的业务..
 	// fmt.Println("链接建立成功!")
 
-	user := NewUser(conn)
+	user := NewUser(conn, server)
 
-	// 用户上线，将用户加入OnlineMap
-	server.mapLock.Lock()
-	server.OnlineMap[user.Name] = user
-	server.mapLock.Unlock()
-
-	// 广播上线消息
-	server.Broadcast(user, "已上线")
+	user.Online()
 
 	go func() {
 		buf := make([]byte, 4096)
 		for {
 			n, err := conn.Read(buf)
 			if n == 0 {
-				server.Broadcast(user, "已下线")
+				user.Offline()
 				return
 			}
 			if err != nil && err != io.EOF {
@@ -82,7 +76,7 @@ func (server *Server) handler(conn net.Conn) {
 			msg := string(buf[:n-1])
 
 			// 将得到的消息进行广播
-			server.Broadcast(user, msg)
+			user.DoMessage(msg)
 		}
 	}()
 
