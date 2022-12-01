@@ -33,6 +33,7 @@ func (user *User) Offline() {
 	user.server.Broadcast(user, "已下线")
 }
 
+// 给当前User对应的客户端发送消息
 func (user *User) SendMsg(msg string) {
 	user.conn.Write([]byte(msg))
 }
@@ -40,9 +41,10 @@ func (user *User) SendMsg(msg string) {
 // 用户处理消息的业务
 func (user *User) DoMessage(msg string) {
 	if msg == "who" {
+		// 查询当前在线用户
 		user.server.mapLock.Lock()
-		for _, user := range user.server.OnlineMap {
-			onlineMsg := "[" + user.Addr + "]" + user.Name + ":" + "在线...\n"
+		for _, onlineUser := range user.server.OnlineMap {
+			onlineMsg := "[" + user.Addr + "]" + onlineUser.Name + ":" + "在线...\n"
 			user.SendMsg(onlineMsg)
 		}
 		user.server.mapLock.Unlock()
@@ -60,6 +62,27 @@ func (user *User) DoMessage(msg string) {
 			user.Name = newName
 			user.SendMsg("您已经更新用户名为:" + user.Name + "\n")
 		}
+	} else if len(msg) > 3 && msg[:3] == "to|" {
+		//消息格式：to|name|消息
+
+		remoteName := strings.Split(msg, "|")[1]
+		if remoteName == "" {
+			user.SendMsg("消息格式不正确，请使用\"to|name|message格式\"\n")
+			return
+		}
+
+		remoteUser, ok := user.server.OnlineMap[remoteName]
+		if !ok {
+			user.SendMsg("该用户名不存在，请重发\n")
+			return
+		}
+
+		remoteMsg := strings.Split(msg, "|")[2]
+		if remoteMsg == "" {
+			user.SendMsg("发送内容为空，请重发\n")
+		}
+
+		remoteUser.SendMsg(user.Name + "对你说:" + remoteMsg)
 	} else {
 		user.server.Broadcast(user, msg)
 	}
