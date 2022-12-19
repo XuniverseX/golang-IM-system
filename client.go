@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"os"
+	"strconv"
 )
 
 type Client struct {
@@ -43,13 +44,20 @@ func (client *Client) DealMessage() {
 
 func (client *Client) menu() bool {
 	var flag int
+	var temp string
 
 	fmt.Println("1.公聊模式")
 	fmt.Println("2.私聊模式")
 	fmt.Println("3.更新用户名")
 	fmt.Println("0.退出")
 
-	fmt.Scanln(&flag)
+	fmt.Scanln(&temp)
+
+	flag, err := strconv.Atoi(temp)
+	if err != nil {
+		fmt.Println(">>>>>>请输入合法数字<<<<<<")
+		return false
+	}
 
 	if flag >= 0 && flag <= 3 {
 		client.flag = flag
@@ -171,7 +179,7 @@ var serverPort int
 
 // ./client -ip 127.0.0.1 -port 8888
 func init() {
-	flag.StringVar(&serverIp, "ip", "127.0.0.1", "设置服务器IP地址(默认127.0.0.1)")
+	flag.StringVar(&serverIp, "ip", "127.0.0.1", "设置服务器IP地址")
 	flag.IntVar(&serverPort, "port", 8888, "设置服务器端口(默认8888)")
 	// 设置命令行解析
 	flag.Parse()
