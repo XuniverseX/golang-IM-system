@@ -179,7 +179,7 @@ var serverPort int
 
 // ./client -ip 127.0.0.1 -port 8888
 func init() {
-	flag.StringVar(&serverIp, "ip", "127.0.0.1", "设置服务器IP地址")
+	flag.StringVar(&serverIp, "ip", "47.98.154.163", "设置服务器IP地址")
 	flag.IntVar(&serverPort, "port", 8888, "设置服务器端口(默认8888)")
 	// 设置命令行解析
 	flag.Parse()

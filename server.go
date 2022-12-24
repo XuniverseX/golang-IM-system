@@ -52,6 +52,7 @@ func (server *Server) Broadcast(user *User, msg string) {
 	server.Message <- sendMsg
 }
 
+// 消息处理器
 func (server *Server) handler(conn net.Conn) {
 	// 当前链接的业务..
 	// fmt.Println("链接建立成功!")
