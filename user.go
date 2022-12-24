@@ -44,7 +44,7 @@ func (user *User) DoMessage(msg string) {
 		// 查询当前在线用户
 		user.server.mapLock.Lock()
 		for _, onlineUser := range user.server.OnlineMap {
-			onlineMsg := "[" + user.Addr + "]" + onlineUser.Name + ":" + "在线...\n"
+			onlineMsg := "[" + onlineUser.Addr + "]" + onlineUser.Name + ":" + "在线...\n"
 			user.SendMsg(onlineMsg)
 		}
 		user.server.mapLock.Unlock()

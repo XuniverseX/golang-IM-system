@@ -20,7 +20,7 @@ type Server struct {
 	Message chan string
 }
 
-// create new server
+// 创建server
 func NewServer(ip string, port int) *Server {
 	server := &Server{
 		Ip:        ip,
@@ -38,8 +38,8 @@ func (server *Server) ListenMessager() {
 		msg := <-server.Message
 
 		server.mapLock.Lock()
-		for _, cli := range server.OnlineMap {
-			cli.C <- msg
+		for _, user := range server.OnlineMap {
+			user.C <- msg
 		}
 		server.mapLock.Unlock()
 	}
